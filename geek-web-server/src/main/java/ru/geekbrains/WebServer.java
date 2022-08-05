@@ -9,7 +9,7 @@ public class WebServer {
     private static String WWW = "/Java_HW/HomeWork/geek-architecture-02/www";
 
     public static void main(String[] args) {
-        //socet API
+        //socket API
         try (ServerSocket serverSocket = new ServerSocket(8088)) {
             System.out.println("Server started!");
 
