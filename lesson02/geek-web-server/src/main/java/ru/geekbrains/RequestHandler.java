@@ -1,10 +1,12 @@
 package ru.geekbrains;
 
+import ru.geekbrains.domain.HttpRequest;
+import ru.geekbrains.domain.HttpResponse;
 import ru.geekbrains.service.FileService;
 import ru.geekbrains.service.SocketService;
 
 import java.io.IOException;
-import java.util.Deque;
+
 
 public class RequestHandler implements Runnable {
 
@@ -19,31 +21,31 @@ public class RequestHandler implements Runnable {
 
     @Override
     public void run() {
-        Deque<String> rawRequest = socketService.readRequest();
-        String firstLine = rawRequest.pollFirst();
-        String[] parts = firstLine.split(" ");
+        HttpRequest request = new RequestParser().parse(socketService.readRequest());
 
-        if (!fileService.exists(parts[1])) {
-            String rawResponse =
-                    "HTTP/1.1 404 NOT_FOUND\n" +
-                    "Content-Type: text/html; charset=utf-8\n" +
-                    "\n" +
-                    "<h1>Файл не найден!</h1>";
-            socketService.writeResponse(rawResponse);
+        if (!fileService.exists(request.getPath())) {
+            HttpResponse resp = new HttpResponse(404, "NOT_FOUND", "<h1>Файл не найден!</h1>");
+            sendResponse(resp);
             return;
         }
 
-        String rawResponse = "HTTP/1.1 200 OK\n" +
-                "Content-Type: text/html; charset=utf-8\n" +
-                "\n" +
-                fileService.readFile(parts[1]);
-        socketService.writeResponse(rawResponse);
+        if (fileService.isDirectory(request.getPath())) {
+            HttpResponse resp = new HttpResponse(400, "BAD_REQUEST", "<h1>Вы запросили директорию!</h1>");
+            sendResponse(resp);
+            return;
+        }
+        HttpResponse resp = new HttpResponse(200, "OK", fileService.readFile(request.getPath()));
+        sendResponse(resp);
+
+        System.out.println("Client disconnected!");
+    }
+    private void sendResponse(HttpResponse resp) {
+        socketService.writeResponse(new ResponseSerializer().serialize(resp));
 
         try {
             socketService.close();
         } catch (IOException ex) {
             throw new IllegalStateException(ex);
         }
-        System.out.println("Client disconnected!");
     }
 }
