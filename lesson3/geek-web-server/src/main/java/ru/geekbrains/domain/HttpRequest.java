@@ -7,43 +7,47 @@ public class HttpRequest {
 
     private String method;
 
-    private String url;
+    private String path;
 
     private Map<String, String> headers = new HashMap<>();
 
     private String body;
 
     public HttpRequest() {
+        this.headers = new HashMap<>();
     }
 
-    public HttpRequest(String method, String url, Map<String, String> headers, String body) {
+    public HttpRequest(String method, String path, Map<String, String> headers, String body) {
         this.method = method;
-        this.url = url;
+        this.path = path;
         this.headers = headers;
         this.body = body;
+    }
+    protected void addHeader(String name, String value){
+        this.getHeaders().put(name, value);
     }
 
     public String getMethod() {
         return method;
     }
 
-    public void setMethod(String method) {
+    protected void setMethod(String method) {
         this.method = method;
     }
 
-    public String getUrl() {
-        return url;
+    public String getPath() {
+        return path;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    protected void setPath(String path) {
+        this.path = path;
     }
 
     public Map<String, String> getHeaders() {
         return headers;
     }
 
-    public void setHeaders(Map<String, String> headers) {
+    protected void setHeaders(Map<String, String> headers) {
         this.headers = headers;
     }
 
@@ -51,7 +55,42 @@ public class HttpRequest {
         return body;
     }
 
-    public void setBody(String body) {
+    protected void setBody(String body) {
         this.body = body;
     }
+
+    public static Builder getBuilder(){
+        return new Builder();
+    }
+    public static class Builder{
+        private final HttpRequest request;
+
+        public Builder(){
+            this.request = new HttpRequest();
+        }
+        public Builder setMethod(String method){
+            this.request.setMethod(method);
+            return this;
+        }
+        public Builder setPath(String path){
+            this.request.setPath(path);
+            return this;
+        }
+        public Builder setHeader(Map<String,String> map){
+            this.request.setHeaders(map);
+            return this;
+        }
+        public Builder addHeader(String name, String value){
+            this.request.addHeader(name,value);
+            return this;
+        }
+        public Builder setBody(String body){
+            this.request.setBody(body);
+            return this;
+        }
+        public HttpRequest build(){
+            return this.request;
+        }
+    }
+
 }

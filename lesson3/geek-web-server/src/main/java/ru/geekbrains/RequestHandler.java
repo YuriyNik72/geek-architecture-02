@@ -2,56 +2,96 @@ package ru.geekbrains;
 
 import ru.geekbrains.domain.HttpRequest;
 import ru.geekbrains.domain.HttpResponse;
-import ru.geekbrains.service.FileService;
-import ru.geekbrains.service.SocketService;
+import ru.geekbrains.service.FileServiceImpl;
+import ru.geekbrains.service.SocketServiceImpl;
 
 import java.io.IOException;
-import java.util.Deque;
 
 public class RequestHandler implements Runnable {
 
-    private final SocketService socketService;
+    private SocketServiceImpl socketServiceImpl;
 
-    private final FileService fileService;
-    private final RequestParser requestParser;
-    private final ResponseSerializer responseSerializer;
+    private FileServiceImpl fileServiceImpl;
+    public RequestHandler(){
 
-    public RequestHandler(SocketService socketService,
-                          FileService fileService,
-                          RequestParser requestParser,
-                          ResponseSerializer responseSerializer) {
-        this.socketService = socketService;
-        this.fileService = fileService;
-        this.requestParser = requestParser;
-        this.responseSerializer = responseSerializer;
+    }
+//    private final RequestParser requestParser;
+//    private final ResponseSerializer responseSerializer;
+
+    public RequestHandler(SocketServiceImpl socketServiceImpl,
+                          FileServiceImpl fileServiceImpl) {
+        this.socketServiceImpl = socketServiceImpl;
+        this.fileServiceImpl = fileServiceImpl;
+
     }
 
     @Override
     public void run() {
-        Deque<String> rawRequest = socketService.readRequest();
-        HttpRequest req = requestParser.parse(rawRequest);
+        HttpRequest req = new RequestParser().parse(socketServiceImpl.readRequest());
 
-        if (!fileService.exists(req.getUrl())) {
-            HttpResponse resp = new HttpResponse();
-            resp.setStatusCode(404);
-            resp.setStatusCodeName("NOT_FOUND");
-            resp.getHeaders().put("Content-Type", "text/html; charset=utf-8");
-            socketService.writeResponse(responseSerializer.serialize(resp));
+        if (!fileServiceImpl.exists(req.getPath())) {
+            HttpResponse resp = HttpResponse.getBuilder()
+                    .setStatusCode(404)
+                    .setStatusText("NOT_FOUND")
+                    .setBody("<h1> File not found </h1>")
+                    .build();
+            sendResponse(resp);
             return;
         }
 
-        HttpResponse resp = new HttpResponse();
-        resp.setStatusCode(200);
-        resp.setStatusCodeName("OK");
-        resp.getHeaders().put("Content-Type", "text/html; charset=utf-8");
-        resp.setBody(fileService.readFile(req.getUrl()));
-        socketService.writeResponse(responseSerializer.serialize(resp));
+        if (fileServiceImpl.isDirectory(req.getPath())) {
+            HttpResponse resp = HttpResponse.getBuilder()
+                    .setStatusCode(400)
+                    .setStatusText("BAD_REQUEST")
+                    .setBody("<h1> This directory </h1>")
+                    .build();
+            sendResponse(resp);
+            return;
+        }
+
+        HttpResponse resp = HttpResponse.getBuilder()
+                .setStatusCode(200)
+                .setStatusText("OK")
+                .setBody("<h1> This directory </h1>")
+                .build();
+        sendResponse(resp);
+        System.out.println("Client disconnected!");
+    }
+        private void sendResponse(HttpResponse resp){
+         socketServiceImpl.writeResponse(new ResponseSerializer().serialize(resp));
 
         try {
-            socketService.close();
+            socketServiceImpl.close();
         } catch (IOException ex) {
             throw new IllegalStateException(ex);
         }
-        System.out.println("Client disconnected!");
     }
+    public static Builder getBuilder(){
+        return new Builder();
+    }
+    public static class Builder{
+        private final RequestHandler handler;
+
+        public Builder() {
+           this.handler = new RequestHandler();
+        }
+        public Builder setSocketService(SocketServiceImpl socketServiceImpl){
+            this.handler.setSocketService(socketServiceImpl);
+            return this;
+        }
+        public Builder setFileService(FileServiceImpl fileServiceImpl){
+            this.handler.setFileService(fileServiceImpl);
+            return this;
+        }
+        public RequestHandler build(){
+            return this.handler;
+        }
+    }
+        private void setFileService(FileServiceImpl fileServiceImpl){
+            this.fileServiceImpl = fileServiceImpl;
+        }
+        private void setSocketService(SocketServiceImpl socketServiceImpl){
+            this.socketServiceImpl = socketServiceImpl;
+        }
+
 }
