@@ -18,6 +18,7 @@
     <modules>
         <module>geek-web-server</module>
         <module>lesson02</module>
+        <module>lesson3</module>
     </modules>
 
 </project>
