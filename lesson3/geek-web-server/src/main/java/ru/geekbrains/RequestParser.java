@@ -7,25 +7,24 @@ import java.util.Deque;
 public class RequestParser {
 
     public HttpRequest parse(Deque<String> rawRequest) {
-        HttpRequest.Builder requestBuilder =  HttpRequest.getBuilder();
-        String[] parts = rawRequest.pollFirst().split("\\s+");
+        HttpRequest httpRequest = new HttpRequest();
+        String[] firstLine = rawRequest.pollFirst().split(" ");
+        httpRequest.setMethod(firstLine[0]);
+        httpRequest.setUrl(firstLine[1]);
 
-        requestBuilder.setMethod(parts[0]);
-        requestBuilder.setPath(parts[1]);
-
-        while (!rawRequest.isEmpty() && !rawRequest.peekFirst().isEmpty()) {
+        while (!rawRequest.isEmpty()) {
             String line = rawRequest.pollFirst();
-            String headerName = line.split(": ")[0];
-            String headerValue = line.split(": ")[1];
-
-            requestBuilder.addHeader(headerName, headerValue);
-        }
-        rawRequest.pollFirst();
-            if (!rawRequest.isEmpty()) {
-               requestBuilder.setBody(String.join("",rawRequest));
+            if (line.isBlank()) {
+                break;
             }
-            return requestBuilder.build();
-
+            String[] header = line.split(": ");
+            httpRequest.getHeaders().put(header[0], header[1]);
         }
-
+        StringBuilder sb = new StringBuilder();
+        while (!rawRequest.isEmpty()) {
+            sb.append(rawRequest.pollFirst());
+        }
+        httpRequest.setBody(sb.toString());
+        return httpRequest;
+    }
 }
