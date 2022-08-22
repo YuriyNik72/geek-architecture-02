@@ -1,14 +1,16 @@
 package ru.geekbrains.service;
 
+import ru.geekbrains.interfaces.FileService;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class FileService {
+public class FileServiceImpl implements FileService {
 
     private final String rootDir;
 
-    public FileService(String rootDir) {
+    public FileServiceImpl(String rootDir) {
         this.rootDir = rootDir;
     }
 
