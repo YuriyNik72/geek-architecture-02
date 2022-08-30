@@ -12,7 +12,7 @@ class GetMethodHandler extends MethodHandlerImpl {
     private final FileService fileService;
 
     public GetMethodHandler(MethodHandlerImpl next, SocketService socketService, ResponseSerializer responseSerializer, FileService fileService) {
-        super("GET", next, socketService, responseSerializer, config);
+        super("GET", next, socketService, responseSerializer, next.config);
         this.fileService = fileService;
     }
 

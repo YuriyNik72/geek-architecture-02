@@ -9,7 +9,7 @@ import ru.geekbrains.service.interfaces.SocketService;
 class PutMethodHandler extends MethodHandlerImpl {
 
     public PutMethodHandler(MethodHandlerImpl next, SocketService socketService, ResponseSerializer responseSerializer) {
-        super("PUT", next, socketService, responseSerializer, config);
+        super("PUT", next, socketService, responseSerializer, next.config);
     }
 
     @Override

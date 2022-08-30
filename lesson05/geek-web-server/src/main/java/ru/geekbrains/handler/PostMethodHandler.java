@@ -9,7 +9,7 @@ import ru.geekbrains.service.interfaces.SocketService;
 class PostMethodHandler extends MethodHandlerImpl {
 
     public PostMethodHandler(MethodHandlerImpl next, SocketService socketService, ResponseSerializer responseSerializer) {
-        super("POST", next, socketService, responseSerializer, config);
+        super("POST", next, socketService, responseSerializer, next.config);
     }
 
     @Override
