@@ -1,6 +1,7 @@
 package ru.geekbrains.service;
 
 import org.junit.Test;
+import ru.geekbrains.service.interfaces.SocketService;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

@@ -1,41 +1,42 @@
 package ru.geekbrains;
 
 import ru.geekbrains.domain.HttpRequest;
-import ru.geekbrains.domain.HttpResponse;
 import ru.geekbrains.handler.MethodHandler;
-import ru.geekbrains.service.FileService;
-import ru.geekbrains.service.SocketService;
+import ru.geekbrains.service.interfaces.SocketService;
 
 import java.io.IOException;
-import java.util.Deque;
 
 public class RequestHandler implements Runnable {
 
-    private final SocketService socketService;
-    private final RequestParser requestParser;
-    private final MethodHandler methodHandler;
+    private MethodHandler methodHandler;
 
-    public RequestHandler(SocketService socketService,
-                          RequestParser requestParser,
-                          MethodHandler methodHandler
-                          ) {
-        this.socketService = socketService;
-        this.requestParser = requestParser;
+    private RequestParser requestParser;
+
+    private SocketService socketService;
+
+    public RequestHandler() {
+
+    }
+
+    public RequestHandler(SocketService socketService, RequestParser requestParser, MethodHandler methodHandler) {
         this.methodHandler = methodHandler;
+        this.requestParser = requestParser;
+        this.socketService = socketService;
     }
 
     @Override
     public void run() {
-        Deque<String> rawRequest = socketService.readRequest();
-        HttpRequest req = requestParser.parse(rawRequest);
+        HttpRequest request = requestParser.parse(socketService.readRequest());
 
-        methodHandler.handle(req);
+        methodHandler.handle(request);
 
         try {
             socketService.close();
         } catch (IOException ex) {
             throw new IllegalStateException(ex);
         }
+
         System.out.println("Client disconnected!");
     }
+
 }

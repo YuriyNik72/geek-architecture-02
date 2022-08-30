@@ -4,7 +4,7 @@ import ru.geekbrains.ResponseSerializer;
 import ru.geekbrains.config.ServerConfig;
 import ru.geekbrains.domain.HttpRequest;
 import ru.geekbrains.domain.HttpResponse;
-import ru.geekbrains.service.SocketService;
+import ru.geekbrains.service.interfaces.SocketService;
 
 abstract class MethodHandlerImpl implements MethodHandler {
 
@@ -35,11 +35,11 @@ abstract class MethodHandlerImpl implements MethodHandler {
             next.handle(request);
             return;
         } else {
-            response = HttpResponse.createBuilder()
-                    .withStatusCode(405)
-                    .withStatusCodeName("METHOD_NOT_ALLOWED")
-                    .withHeader("Content-Type", "text/html; charset=utf-8")
-                    .withBody("<h1>Метод не поддерживается!</h1>")
+            response = HttpResponse.getBuilder()
+                    .setStatusCode(405)
+                    .setStatusText("METHOD_NOT_ALLOWED")
+                    .addHeader("Content-Type", "text/html; charset=utf-8")
+                    .setBody("<h1>Метод не поддерживается!</h1>")
                     .build();
         }
         String rawResponse = responseSerializer.serialize(response);

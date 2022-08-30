@@ -1,38 +1,45 @@
 package ru.geekbrains;
 
-import ru.geekbrains.config.*;
+
 import ru.geekbrains.handler.MethodHandlerFactory;
-import ru.geekbrains.service.FileService;
-import ru.geekbrains.service.SocketService;
+import ru.geekbrains.service.ServicesFactory;
+
+import ru.geekbrains.service.interfaces.SocketService;
+import ru.geekbrains.utils.ApplicationProperties;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+
 
 public class WebServer {
 
     public static void main(String[] args) {
-        ServerConfig config = ServerConfigFactory.create(args);
-        try (ServerSocket serverSocket = new ServerSocket(config.getPort())) {
+        ApplicationProperties applicationProperties = new ApplicationProperties("app.properties").readProperties();
+        try (ServerSocket serverSocket = new ServerSocket(applicationProperties.getPort())) {
             System.out.println("Server started!");
 
             while (true) {
                 Socket socket = serverSocket.accept();
                 System.out.println("New client connected!");
 
-                SocketService socketService = new SocketService(socket);
+                SocketService socketService = ServicesFactory.getSocketService(socket);
 
                 new Thread(new RequestHandler(
                         socketService,
                         new RequestParser(),
-                        MethodHandlerFactory.create(socketService,
+                        MethodHandlerFactory.createAnnotated(socketService,
                                 new ResponseSerializer(),
-                                config,
-                                new FileService(config.getWww()))
+                                ServicesFactory.getFileService(applicationProperties.getRoot()))
+
                 )).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 }

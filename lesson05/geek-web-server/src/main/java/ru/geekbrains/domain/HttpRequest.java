@@ -7,66 +7,96 @@ public class HttpRequest {
 
     private String method;
 
-    private String url;
+    private String path;
 
-    private Map<String, String> headers = new HashMap<>();
+    private Map<String, String> headers;
 
     private String body;
 
-    private HttpRequest() {
+    public HttpRequest() {
+        this.headers = new HashMap<>();
+    }
+
+    public HttpRequest(String method, String path, Map<String, String> headers, String body) {
+        this.method = method;
+        this.path = path;
+        this.headers = headers;
+        this.body = body;
+    }
+
+    protected void addHeader(String name, String value) {
+        this.getHeaders().put(name, value);
     }
 
     public String getMethod() {
         return method;
     }
 
-    public String getUrl() {
-        return url;
+    protected void setMethod(String method) {
+        this.method = method;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    protected void setPath(String path) {
+        this.path = path;
     }
 
     public Map<String, String> getHeaders() {
         return headers;
     }
 
+    protected void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
+    }
+
     public String getBody() {
         return body;
     }
 
-    public static Builder createBuilder() {
+    protected void setBody(String body) {
+        this.body = body;
+    }
+
+    public static Builder getBuilder() {
         return new Builder();
     }
 
     public static class Builder {
+        private final HttpRequest request;
 
-        private final HttpRequest request = new HttpRequest();
+        public Builder() {
+            this.request = new HttpRequest();
+        }
 
-        public Builder withMethod(String method) {
-            this.request.method = method;
+        public Builder setMethod(String method) {
+            this.request.setMethod(method);
             return this;
         }
 
-        public Builder withUrl(String url) {
-            this.request.url = url;
+        public Builder setPath(String path) {
+            this.request.setPath(path);
             return this;
         }
 
-        public Builder withHeader(String key, String value) {
-            this.request.getHeaders().put(key, value);
+        public Builder setHeaders(Map<String, String> map) {
+            this.request.setHeaders(map);
             return this;
         }
 
-        public Builder withBody(String body) {
-            this.request.body = body;
+        public Builder addHeader(String name, String value) {
+            this.request.addHeader(name, value);
+            return this;
+        }
+
+        public Builder setBody(String body) {
+            this.request.setBody(body);
             return this;
         }
 
         public HttpRequest build() {
-            if (this.request.getMethod() == null) {
-                throw new IllegalStateException("Method not defined");
-            }
-            if (this.request.getUrl() == null) {
-                throw new IllegalStateException("Url not defined");
-            }
             return this.request;
         }
     }

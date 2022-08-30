@@ -1,5 +1,7 @@
 package ru.geekbrains.service;
 
+import ru.geekbrains.service.interfaces.SocketService;
+
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -7,14 +9,15 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 
-public class SocketService implements Closeable {
+public class SocketServiceImpl implements SocketService {
 
     private final Socket socket;
 
-    public SocketService(Socket socket) {
+    public SocketServiceImpl(Socket socket) {
         this.socket = socket;
     }
 
+    @Override
     public Deque<String> readRequest() {
         try {
             BufferedReader input = new BufferedReader(
@@ -35,6 +38,7 @@ public class SocketService implements Closeable {
         }
     }
 
+    @Override
     public void writeResponse(String rawResponse) {
         try {
             PrintWriter output = new PrintWriter(socket.getOutputStream());
