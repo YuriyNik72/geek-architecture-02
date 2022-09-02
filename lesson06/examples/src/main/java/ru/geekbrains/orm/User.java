@@ -8,13 +8,22 @@ public class User {
 
     private String password;
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
+
     public User(int id, String login, String password) {
         this.id = id;
         this.login = login;
         this.password = password;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -37,4 +46,7 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
 }
+
+

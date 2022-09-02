@@ -2,8 +2,8 @@ package ru.geekbrains;
 
 import ru.geekbrains.config.*;
 import ru.geekbrains.handler.AnnotatedMethodHandlerFactory;
-import ru.geekbrains.service.FileService;
-import ru.geekbrains.service.SocketService;
+import ru.geekbrains.service.interfaces.FileService;
+import ru.geekbrains.service.interfaces.SocketService;
 
 import java.io.IOException;
 import java.net.ServerSocket;

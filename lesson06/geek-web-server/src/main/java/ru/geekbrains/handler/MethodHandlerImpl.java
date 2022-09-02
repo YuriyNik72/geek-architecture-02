@@ -3,7 +3,7 @@ package ru.geekbrains.handler;
 import ru.geekbrains.ResponseSerializer;
 import ru.geekbrains.domain.HttpRequest;
 import ru.geekbrains.domain.HttpResponse;
-import ru.geekbrains.service.SocketService;
+import ru.geekbrains.service.interfaces.SocketService;
 
 abstract class MethodHandlerImpl implements MethodHandler {
 
