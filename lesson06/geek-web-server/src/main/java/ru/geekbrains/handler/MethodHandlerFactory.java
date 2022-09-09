@@ -1,8 +1,8 @@
 package ru.geekbrains.handler;
 
 import ru.geekbrains.ResponseSerializer;
-import ru.geekbrains.service.FileService;
-import ru.geekbrains.service.SocketService;
+import ru.geekbrains.service.interfaces.FileService;
+import ru.geekbrains.service.interfaces.SocketService;
 
 public final class MethodHandlerFactory {
 

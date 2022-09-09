@@ -1,10 +1,8 @@
 package ru.geekbrains;
 
 import ru.geekbrains.domain.HttpRequest;
-import ru.geekbrains.domain.HttpResponse;
 import ru.geekbrains.handler.MethodHandler;
-import ru.geekbrains.service.FileService;
-import ru.geekbrains.service.SocketService;
+import ru.geekbrains.service.interfaces.SocketService;
 
 import java.io.IOException;
 import java.util.Deque;

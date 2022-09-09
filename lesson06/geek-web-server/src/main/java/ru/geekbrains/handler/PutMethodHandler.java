@@ -3,8 +3,8 @@ package ru.geekbrains.handler;
 import ru.geekbrains.ResponseSerializer;
 import ru.geekbrains.domain.HttpRequest;
 import ru.geekbrains.domain.HttpResponse;
-import ru.geekbrains.service.FileService;
-import ru.geekbrains.service.SocketService;
+import ru.geekbrains.service.interfaces.FileService;
+import ru.geekbrains.service.interfaces.SocketService;
 
 @Handler(order = 2)
 class PutMethodHandler extends MethodHandlerImpl {

@@ -2,8 +2,8 @@ package ru.geekbrains.handler;
 
 import org.reflections.Reflections;
 import ru.geekbrains.ResponseSerializer;
-import ru.geekbrains.service.FileService;
-import ru.geekbrains.service.SocketService;
+import ru.geekbrains.service.interfaces.FileService;
+import ru.geekbrains.service.interfaces.SocketService;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;

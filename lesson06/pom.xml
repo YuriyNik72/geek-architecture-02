@@ -11,6 +11,8 @@
 
     <artifactId>lesson06</artifactId>
 
+    <packaging>pom</packaging>
+
     <dependencies>
         <dependency>
             <groupId>org.reflections</groupId>
@@ -39,5 +41,10 @@
         </dependency>
 
     </dependencies>
+    <modules>
+        <module>examples</module>
+        <module>geek-web-server</module>
+        <module>rx-web-server</module>
+    </modules>
 
 </project>

@@ -1,6 +1,7 @@
 package ru.geekbrains.orm;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class UserRepository {
@@ -18,27 +19,36 @@ public class UserRepository {
     }
 
     public Optional<User> findById(long id) {
-        return Optional.empty();
+        return mapper.findById(id);
     }
 
     public void beginTransaction() {
-
+        try {
+            conn.setAutoCommit(false);
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 
     public void insert(User user) {
-
+        unitOfWork.registerNew(user);
     }
 
     public void update(User user) {
-
+        unitOfWork.registerUpdate(user);
     }
 
     public void delete(User user) {
-
+        unitOfWork.registerDelete(user);
     }
 
     public void commitTransaction() {
-
+        unitOfWork.commit();
+        try {
+            conn.commit();
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 
     public void rollbackTransaction() {
